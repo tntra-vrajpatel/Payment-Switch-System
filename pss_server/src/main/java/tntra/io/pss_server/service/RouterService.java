@@ -1,4 +1,4 @@
-package tntra.io.pss_server.route;
+package tntra.io.pss_server.service;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;

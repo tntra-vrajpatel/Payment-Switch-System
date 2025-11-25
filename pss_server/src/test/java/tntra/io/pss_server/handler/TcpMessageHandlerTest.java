@@ -9,8 +9,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import tntra.io.pss_server.model.TransactionMessage;
-import tntra.io.pss_server.route.RouterService;
-import tntra.io.pss_server.validation.ValidationService;
+import tntra.io.pss_server.service.RouterService;
+import tntra.io.pss_server.service.ValidationService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

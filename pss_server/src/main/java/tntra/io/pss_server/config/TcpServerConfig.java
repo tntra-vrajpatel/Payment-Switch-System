@@ -22,7 +22,7 @@ public class TcpServerConfig {
 
     // Establishes Connection & perform Serialization and Deserialization
     @Bean
-    public TcpNetServerConnectionFactory serverConnectionFactory() {
+     public TcpNetServerConnectionFactory serverConnectionFactory() {
 
         TcpNetServerConnectionFactory factory = new TcpNetServerConnectionFactory(port);
 

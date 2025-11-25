@@ -1,4 +1,4 @@
-package tntra.io.pss_server.validation;
+package tntra.io.pss_server.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;

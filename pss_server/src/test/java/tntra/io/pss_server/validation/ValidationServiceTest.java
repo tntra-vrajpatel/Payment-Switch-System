@@ -3,6 +3,7 @@ package tntra.io.pss_server.validation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tntra.io.pss_server.model.TransactionMessage;
+import tntra.io.pss_server.service.ValidationService;
 
 import java.util.Set;
 
