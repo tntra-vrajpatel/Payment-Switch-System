@@ -35,6 +35,14 @@ public class TcpServerConfig {
         factory.setSerializer(serializer);
         factory.setDeserializer(serializer);
 
+        // Connection & Scalability settings ---
+        factory.setSoTimeout(10000);              // 10 sec read timeout
+        factory.setBacklog(100);                  // Maximum queued connections
+        factory.setSoReceiveBufferSize(1024 * 64); // 64KB receive buffer
+        factory.setSoSendBufferSize(1024 * 64);    // 64KB send buffer
+        factory.setSoTcpNoDelay(true);               // Low latency
+        factory.setSingleUse(false);               // Reuse connection
+
         return factory;
     }
 

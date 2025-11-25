@@ -27,6 +27,18 @@ public class ClientServiceImpl implements ClientService {
 
         log.info("Connecting to TCP server at {}:{}", host, port);
 
+        if (json == null || json.trim().isEmpty()) {
+            log.error("Validation failed: Empty request body");
+            throw new IllegalArgumentException("Request JSON cannot be empty");
+        }
+
+        try {
+            new com.fasterxml.jackson.databind.ObjectMapper().readTree(json);
+        } catch (Exception e) {
+            log.error("Validation failed: Invalid JSON format -> {}", json);
+            throw new IllegalArgumentException("Invalid JSON format. Please check input body.");
+        }
+
         // Socket Creation
         try (Socket socket = new Socket(host, port)) {
             socket.setSoTimeout(10000);
