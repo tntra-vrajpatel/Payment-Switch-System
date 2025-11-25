@@ -15,12 +15,19 @@ import org.springframework.messaging.MessageChannel;
 
 public class TcpServerConfig {
 
-    @Value("${switch.port}")
     private int port;
+
+    public int getPort(){
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 
     // Establishes Connection & perform Serialization and Deserialization
     @Bean
-     public TcpNetServerConnectionFactory serverConnectionFactory() {
+    public TcpNetServerConnectionFactory serverConnectionFactory() {
 
         TcpNetServerConnectionFactory factory = new TcpNetServerConnectionFactory(port);
 
