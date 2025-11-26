@@ -1,7 +1,5 @@
 package tntra.io.pss_client.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -32,18 +30,8 @@ public class ClientController {
             String response = clientService.sendRequest(jsonRequest);
             log.info("Received response from server: {} ",response);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(response);
+            return ResponseEntity.ok(response);
 
-            String responseCode = jsonNode.path("responseCode").asText();
-
-            if ("00".equals(responseCode)) {
-                log.info("Transaction successful with responseCode: {} ",responseCode);
-                return ResponseEntity.ok(response);
-            } else {
-                log.info("Transaction failed with responseCode: {} ",responseCode);
-                return ResponseEntity.badRequest().body(response);
-            }
         } catch (Exception e) {
             log.error("Error while sending message: {} ",e.getMessage(),e);
             return ResponseEntity.internalServerError().body(e.getMessage());
