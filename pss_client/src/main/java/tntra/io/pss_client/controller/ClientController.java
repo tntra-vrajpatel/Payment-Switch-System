@@ -1,5 +1,8 @@
 package tntra.io.pss_client.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tntra.io.pss_client.dto.ResponseDTO;
+import tntra.io.pss_client.dto.TransactionFailedException;
 import tntra.io.pss_client.service.ClientService;
 
 @Slf4j
@@ -22,19 +27,32 @@ public class ClientController {
 
     @PostMapping("/send")
     @Operation(summary = "Send Transaction Message", description = "Sends a JSON transaction request over TCP to the Payment Switch Server.")
-    public ResponseEntity<String> sendMessage(@RequestBody String jsonRequest) {
+    public ResponseEntity<ResponseDTO> sendMessage(@RequestBody String jsonRequest)  {
 
         try {
             log.info("Received request from client:  {} ",jsonRequest);
 
-            String response = clientService.sendRequest(jsonRequest);
+            ResponseDTO response = clientService.sendRequest(jsonRequest);
             log.info("Received response from server: {} ",response);
 
             return ResponseEntity.ok(response);
 
-        } catch (Exception e) {
+        } catch (TransactionFailedException e) {
+
+            log.warn("Transaction failed from server: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(e.getResponse());
+        }catch (IllegalArgumentException e) {
+
+            log.error("Invalid client request: {}", e.getMessage());
+            ResponseDTO error = new ResponseDTO();
+            error.setResponseCode("09");
+            error.setDestination(e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+
+        }
+        catch (Exception e) {
             log.error("Error while sending message: {} ",e.getMessage(),e);
-            return ResponseEntity.internalServerError().body(e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

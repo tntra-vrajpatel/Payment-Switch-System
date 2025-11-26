@@ -1,5 +1,6 @@
 package tntra.io.pss_client.service.serviceImpl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,9 +9,11 @@ import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import tntra.io.pss_client.config.TcpClientConfig;
+import tntra.io.pss_client.dto.ResponseDTO;
 import tntra.io.pss_client.service.ClientService;
 import tntra.io.pss_client.service.ResponseValidation;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,14 +31,14 @@ public class ClientServiceImpl implements ClientService {
     @Autowired
     private ResponseValidation responseValidation;
 
+    @Override
     @Retryable(
             value = { java.io.IOException.class },
             maxAttempts = 3,
             backoff = @Backoff(delay = 2000)
     )
 
-    @Override
-    public String sendRequest(String json) throws Exception {
+    public ResponseDTO sendRequest(String json) throws Exception {
 
         String host = clientConfig.getHost();
         int port = clientConfig.getPort();
@@ -72,19 +75,14 @@ public class ClientServiceImpl implements ClientService {
                 log.info("Received response from server: {} ",response);
 
                 // to check response code
-                responseValidation.validateResponse(response);
+                ResponseDTO validatedResponse = responseValidation.validateResponse(response);
+                return validatedResponse;
 
-                return response != null ? response : ""; // send to clientController
             }
         }
         catch (Exception e){
             log.error("TCP communication error: {}\", e.getMessage(), e");
             throw e;
         }
-    }
-    @Recover
-    public String recover(IOException e, String json) {
-        log.error("TCP retry exhausted for request: {}", json, e);
-        return "TCP_SERVER_UNAVAILABLE";
     }
 }

@@ -16,4 +16,7 @@ public class TransactionMessage {
     private String amount;
     private String responseCode;
     private String destination;
+
+    public TransactionMessage(String txn001, String number, String number1) {
+    }
 }
