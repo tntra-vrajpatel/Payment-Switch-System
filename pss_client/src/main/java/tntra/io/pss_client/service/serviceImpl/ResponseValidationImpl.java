@@ -17,13 +17,29 @@ public class ResponseValidationImpl implements ResponseValidation {
         try{
             ResponseDTO dto = new ObjectMapper().readValue(response, ResponseDTO.class);
 
+            String responseCode = dto.getResponseCode();
+
             if("00".equals(dto.getResponseCode())){
                 log.info("Transaction Successful: {}",dto.getResponseCode());
+                dto.setMessage("Transaction Successful");
                 return dto;
             }else {
                 log.warn("Transaction failed with responseCode: {}", dto.getResponseCode());
-                throw new TransactionFailedException(dto);
 
+                switch (responseCode){
+                    case "02":
+                        dto.setMessage("Transaction failed due to Invalid PAN");
+                        break;
+
+                    case "03":
+                        dto.setMessage("Transaction failed due to Invalid Amount");
+                        break;
+
+                    case "04":
+                        dto.setMessage("Transaction failed because PAN is Black Listed");
+                        break;
+                }
+                throw new TransactionFailedException(dto);
             }
         }catch (TransactionFailedException e) {
             throw e;

@@ -9,4 +9,9 @@ public class ResponseDTO {
     private String amount;
     private String responseCode;
     private String destination;
+    private String message;
+
+    public void setMessage(String message,String responseCode) {
+        this.message = message;
+    }
 }

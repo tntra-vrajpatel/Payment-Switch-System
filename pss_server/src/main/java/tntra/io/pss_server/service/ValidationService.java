@@ -76,6 +76,7 @@ public class ValidationService {
             return;
         }
 
+        // BlackListed PAN validation
         if (blackListedPan.contains(message.getPan())) {
             log.warn("Validation failed: Blacklisted PAN {}", message.getPan());
             message.setResponseCode("04");
