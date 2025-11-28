@@ -23,8 +23,6 @@ public class ValidationService {
 
     @Value("${limits.pan-max-length}")
     private int panMaxLength;
-
-
     private Set<String> blackListedPan;
 
     public Set<String> getBlackListedPan() {

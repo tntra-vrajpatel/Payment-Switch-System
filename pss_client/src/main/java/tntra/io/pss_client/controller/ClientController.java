@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tntra.io.pss_client.dto.ResponseDTO;
-import tntra.io.pss_client.dto.TransactionFailedException;
 import tntra.io.pss_client.service.ClientService;
 
 @Slf4j
@@ -26,30 +25,11 @@ public class ClientController {
     @Operation(summary = "Send Transaction Message", description = "Sends a JSON transaction request over TCP to the Payment Switch Server.")
     public ResponseEntity<ResponseDTO> sendMessage(@RequestBody String jsonRequest)  {
 
-        try {
-            log.info("Received request from client:  {} ",jsonRequest);
+        log.info("Received request from client:  {} ",jsonRequest);
 
-            ResponseDTO response = clientService.sendRequest(jsonRequest);
-            log.info("Received response from server: {} ",response);
+        ResponseDTO response = clientService.sendRequest(jsonRequest);
+        log.info("Received response from server: {} ",response);
 
-            return ResponseEntity.ok(response);
-
-        } catch (TransactionFailedException e) {
-
-            log.warn("Transaction failed from server: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(e.getResponse());
-        }catch (IllegalArgumentException e) {
-
-            log.error("Invalid client request: {}", e.getMessage());
-            ResponseDTO error = new ResponseDTO();
-            error.setResponseCode("09");
-            error.setDestination(e.getMessage());
-            return ResponseEntity.badRequest().body(error);
-
-        }
-        catch (Exception e) {
-            log.error("Error while sending message: {} ",e.getMessage(),e);
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(response);
     }
 }

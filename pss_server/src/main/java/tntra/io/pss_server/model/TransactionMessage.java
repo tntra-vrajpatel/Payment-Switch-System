@@ -17,6 +17,6 @@ public class TransactionMessage {
     private String responseCode;
     private String destination;
 
-    public TransactionMessage(String txn001, String number, String number1) {
-    }
+//    public TransactionMessage(String txn001, String number, String number1) {
+//    }
 }

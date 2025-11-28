@@ -1,21 +1,17 @@
 package tntra.io.pss_client.service.serviceImpl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import tntra.io.pss_client.config.TcpClientConfig;
 import tntra.io.pss_client.dto.ResponseDTO;
+import tntra.io.pss_client.dto.TransactionFailedException;
 import tntra.io.pss_client.service.ClientService;
 import tntra.io.pss_client.service.ResponseValidation;
-
 import java.awt.*;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -38,7 +34,7 @@ public class ClientServiceImpl implements ClientService {
             backoff = @Backoff(delay = 2000)
     )
 
-    public ResponseDTO sendRequest(String json) throws Exception {
+    public ResponseDTO sendRequest(String json)  {
 
         String host = clientConfig.getHost();
         int port = clientConfig.getPort();
@@ -77,12 +73,16 @@ public class ClientServiceImpl implements ClientService {
                 // to check response code
                 ResponseDTO validatedResponse = responseValidation.validateResponse(response);
                 return validatedResponse;
-
             }
         }
-        catch (Exception e){
-            log.error("TCP communication error: {}\", e.getMessage(), e");
+        catch (TransactionFailedException e) {
+            // Business exception must pass through unchanged
             throw e;
+        }
+        catch (Exception e){
+            // Only real TCP/network failures come here
+            log.error("TCP communication error: {}", e.getMessage(), e);
+            throw new RuntimeException("TCP communication failure", e);
         }
     }
 }
