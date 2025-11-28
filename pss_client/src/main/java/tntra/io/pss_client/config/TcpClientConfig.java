@@ -2,10 +2,8 @@ package tntra.io.pss_client.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.annotation.IntegrationComponentScan;
 
 @Configuration
-@IntegrationComponentScan
 @ConfigurationProperties(prefix = "switch")
 
 public class TcpClientConfig {

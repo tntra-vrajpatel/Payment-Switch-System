@@ -1,10 +1,8 @@
 package tntra.io.pss_server.config;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.ip.tcp.TcpInboundGateway;
 import org.springframework.integration.ip.tcp.connection.TcpNetServerConnectionFactory;
@@ -12,13 +10,19 @@ import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer
 import org.springframework.messaging.MessageChannel;
 
 @Configuration
-@IntegrationComponentScan
 @ConfigurationProperties(prefix = "switch")
 
 public class TcpServerConfig {
 
-    @Value("${switch.port}")
     private int port;
+
+    public int getPort(){
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
 
     // Establishes Connection & perform Serialization and Deserialization
     @Bean
@@ -29,6 +33,14 @@ public class TcpServerConfig {
         ByteArrayCrLfSerializer serializer = new ByteArrayCrLfSerializer();
         factory.setSerializer(serializer);
         factory.setDeserializer(serializer);
+
+        // Connection & Scalability settings ---
+        factory.setSoTimeout(10000);              // 10 sec read timeout
+        factory.setBacklog(100);                  // Maximum queued connections
+        factory.setSoReceiveBufferSize(1024 * 64); // 64KB receive buffer
+        factory.setSoSendBufferSize(1024 * 64);    // 64KB send buffer
+        factory.setSoTcpNoDelay(true);               // Low latency
+        factory.setSingleUse(false);               // Reuse connection
 
         return factory;
     }

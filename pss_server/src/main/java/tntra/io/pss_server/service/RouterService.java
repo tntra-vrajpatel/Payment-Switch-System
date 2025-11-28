@@ -1,13 +1,13 @@
-package tntra.io.pss_server.route;
+package tntra.io.pss_server.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
+@Slf4j
 @Service
 @ConfigurationProperties(prefix = "routing")
-
 public class RouterService {
 
     private List<String> bankAEndpoints;
@@ -42,6 +42,7 @@ public class RouterService {
     public String routeDestination(String pan) {
 
         if (pan == null || pan.length() < 6) {
+            log.error("Routing failed: Invalid PAN");
             return "Invalid PAN";
         }
 
@@ -49,15 +50,18 @@ public class RouterService {
 
         for (String bankA : bankAEndpoints) {
             if (bin.startsWith(bankA)) {
+                log.info("Routing mapped: BIN {} -> Bank-A", bin);
                 return "Bank-A ";
             }
         }
 
         for (String bankB : bankBEndpoints) {
             if (bin.startsWith(bankB)) {
+                log.info("Routing mapped: BIN {} -> Bank-B", bin);
                 return "Bank-B ";
             }
         }
+        log.info("Routing to default end-point for BIN {} ",bin);
         return defaultEndpoint;
     }
 }
